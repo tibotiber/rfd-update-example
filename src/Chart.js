@@ -101,17 +101,17 @@ class Chart extends React.Component {
     var circle = svgDoc.select('g').selectAll('circle').data(data)
 
     circle.exit().remove() // remove unneeded circles
-    circle.enter().append('circle').attr('r', 0) // create any new circles needed
+    circle = circle.enter().append('circle').attr('r', 0).merge(circle) // create any new circles needed
 
     // update all circles to new positions
     circle
-      .transition()
-      .duration(500)
       .attr('cx', function (d, i) {
         var spacing = lineLength / data.length
         return xBuffer + i * spacing
       })
       .attr('cy', yBuffer)
+      .transition()
+      .duration(500)
       .attr('r', function (d, i) {
         return d
       })
