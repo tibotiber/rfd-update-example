@@ -45,6 +45,7 @@ class Chart extends React.Component {
        4) data and title provided as props by parent component
        5) reattach to faux dom for updates
        6) move rejoining of data and chart updates to updateD3()
+       7) code update for D3 version 4
     */
 
     var xBuffer = 50
