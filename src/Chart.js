@@ -100,23 +100,31 @@ class Chart extends React.Component {
 
     // rejoin data
     var circle = svgDoc.select('g').selectAll('circle').data(data)
-
+    
     circle.exit().remove() // remove unneeded circles
-    circle = circle.enter().append('circle').attr('r', 0).merge(circle) // create any new circles needed
+    
+    const getCx = function (d, i) {
+     var spacing = lineLength / data.length
+     return xBuffer + i * spacing
+    }
+    // create any new circles needed
+    const newCircles = circle
+      .enter()
+      .append('circle')
+      .attr('cy', yBuffer)
+      .attr('cx', getCx)
+      .attr('r', 0)
 
     // update all circles to new positions
-    circle
-      .attr('cx', function (d, i) {
-        var spacing = lineLength / data.length
-        return xBuffer + i * spacing
-      })
-      .attr('cy', yBuffer)
+    newCircles
+      .merge(circle)
       .transition()
       .duration(500)
+      .attr('cx',getCx)
       .attr('r', function (d, i) {
         return d
       })
-
+    
     this.props.animateFauxDOM(800)
 
     d3.select('text').text(this.props.title)
