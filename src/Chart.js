@@ -45,6 +45,7 @@ class Chart extends React.Component {
        4) data and title provided as props by parent component
        5) reattach to faux dom for updates
        6) move rejoining of data and chart updates to updateD3()
+       7) code update for D3 version 4
     */
 
     var xBuffer = 50
@@ -99,23 +100,31 @@ class Chart extends React.Component {
 
     // rejoin data
     var circle = svgDoc.select('g').selectAll('circle').data(data)
-
+    
     circle.exit().remove() // remove unneeded circles
-    circle.enter().append('circle').attr('r', 0) // create any new circles needed
+    
+    const getCx = function (d, i) {
+     var spacing = lineLength / data.length
+     return xBuffer + i * spacing
+    }
+    // create any new circles needed
+    const newCircles = circle
+      .enter()
+      .append('circle')
+      .attr('cy', yBuffer)
+      .attr('cx', getCx)
+      .attr('r', 0)
 
     // update all circles to new positions
-    circle
+    newCircles
+      .merge(circle)
       .transition()
       .duration(500)
-      .attr('cx', function (d, i) {
-        var spacing = lineLength / data.length
-        return xBuffer + i * spacing
-      })
-      .attr('cy', yBuffer)
+      .attr('cx',getCx)
       .attr('r', function (d, i) {
         return d
       })
-
+    
     this.props.animateFauxDOM(800)
 
     d3.select('text').text(this.props.title)
